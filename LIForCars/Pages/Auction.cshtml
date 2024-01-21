@@ -18,17 +18,16 @@
         <div class="container">
             <div class="column">
                 <h2>Details</h2>
-                <p>BMW M4</p>
-                <p>Year: 2018</p>
-                <p>Engine: 3.0L 6cyl Turbo 6M</p>
-                <p>Transmission: Manual</p>
-                <p>Drivetrain: Rear Wheel Drive</p>
-                <p>Combined MPG: 20</p>
-                <p>Fuel Type: Premium Unleaded (Required)</p>
-                <p>Exterior Color: Black Sapphire Metallic</p>
-                <p>Interior Color: Black</p>
-                <p>Doors: 2</p>
-                <p>Seats: 4</p>
+                <p>Make: @Model.Auction?.Car?.Make</p>
+                <p>Model: @Model.Auction?.Car?.Model</p>
+                <p>Year: @Model.Auction?.Car?.LaunchYear</p>
+                <p>Mileage: @Model.Auction?.Car?.Kms</p>
+                <p>Category: @Model.Auction?.Car?.Category</p>
+                <p>Origin: @Model.Auction?.Car?.Origin</p>
+                <p>Motor: @Model.Auction?.Car?.Motor</p>
+                <p>Fuel Type: @Model.Auction?.Car?.FuelType</p>
+                <p>Plate: @Model.Auction?.Car?.Plate</p>
+                <p>Status: @Model.Auction?.Car?.StatusDescription</p>
             </div>
         </div>
 
@@ -37,11 +36,25 @@
         </div>
 
         <div class="highestbid">
-            <h2>BMW M4</h2>
+            <h2>@Model.Auction?.Car?.Make @Model.Auction?.Car?.Model</h2>
             <p>Current Bid: 50.000€</p>
-            <p>Time Left: 00:00:00</p>
-            <p>Ends: 00/00/0000</p>
-            <p>Buy Now Price: 70.000€</p>
+            <p>Ends: @Model.Auction?.EndDateTime</p>
+            @{
+            // Get the current DateTime
+            DateTime now = DateTime.Now;
+
+            // Calculate the time difference
+            TimeSpan timeDifference = @Model.futureDateTime - now;
+
+            // Access individual components of the time difference
+            int daysDifference = timeDifference.Days;
+            int hoursDifference = timeDifference.Hours;
+            int minutesDifference = timeDifference.Minutes;
+            int secondsDifference = timeDifference.Seconds;
+
+            <p>Time Left: @daysDifference days:@hoursDifference hours:@minutesDifference minutes:@secondsDifference seconds</p>
+            }
+            <p>Buy Now Price: @Model.Auction?.BuyNowPrice</p>
             <button href="#" data-target="bid" class="bidbutton" data-target="bid">Place your Bid</button>
             <button href="#" data-target="buy" class="buybutton" data-target="buy">Buy Now</button>
         </div>
@@ -53,7 +66,7 @@
                         <span class="close-btn" onclick="closeBidPage()">&times;</span>
                         <h2>Place bid</h2>
                     </div>
-                    <p>(Your bid must be at least 100$ above the current highest bid)</p>
+                    <p>(Your bid must be at least @Model.Auction?.MinIncrement above the current highest bid)</p>
                     <form id="bidForm" method="post" action="api/Bid/Update">
                         <input type="text" id="bid" name="bid" placeholder="Your Bid" required/>
                         <div class="modal-footer">
