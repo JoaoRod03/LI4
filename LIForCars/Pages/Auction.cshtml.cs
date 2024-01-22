@@ -3,12 +3,17 @@ using LIForCars.Data.Interfaces;
 using LIForCars.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using LIForCars.Models;
+using LIForCars.Data.Interfaces;
 
 public class AuctionModel : PageModel
 {
-    public Auction Auction { get; set; }
+    private readonly IAuctionRepository _repository;
 
-    public DateTime futureDateTime;
+    public AuctionModel(IAuctionRepository repository)
+    {
+        _repository = repository;
+    }
 
     public IActionResult OnGetHeaderPartial() => Partial("Shared/Header");
     public IActionResult OnGetFooterPartial() => Partial("Shared/Footer");
@@ -17,13 +22,17 @@ public class AuctionModel : PageModel
     public IActionResult OnGetLoginPartial() => Partial("Shared/Login");
     public IActionResult OnGetRegisterPartial() => Partial("Shared/Register");
 
-    public void OnGet()
+    public Auction AuctionDetails { get; private set; }
+
+    public IActionResult OnGet(int id)
     {
-        // Initialize or retrieve data for the auction
-        Auction = new Auction();
-        futureDateTime = Auction.EndDateTime;
+        AuctionDetails = _repository.GetById(id);
+
+        if (AuctionDetails == null)
+        {
+            return NotFound();
+        }
+
+        return Page();
     }
-
-
-
 }
